@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="keywords" content="Information" />
+	<meta name="description" content="control-page" />
+	{% block title%}
+		<title>Control page</title>
+	{% endblock %}
+
+	<link rel="stylesheet" type="text/css" href="/static/css/main.css" />
+	<script type="text/javascript" src="/static/js/jquery.min.js" ></script>
+	<script type="text/javascript" src="/static/js/jquery.js" ></script>
+
+	{% block reference %}
+	{% endblock %}
+</head>
+
+<body style="background:#efeae1">
+	{% block body %}
+
+		{% block header %}
+
+		{% endblock %}
+
+		{% block content %}
+
+		{% endblock %}
+
+	{% endblock %}
+
+	{% block foot%}
+		<div class="footer" style="margin-top:50px">
+			Page generated in 0.007 seconds<br />
+			2013 V1.0B20130129 <br />
+			<a href="http://validator.w3.org/check?uri=referer">Valid XHTML 1.0 Strict</a>,
+			<a href="http://jigsaw.w3.org/css-validator/">CSS 3</a>
+		</div>
+	{% endblock %}
+</body>

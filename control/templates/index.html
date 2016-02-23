@@ -1,0 +1,323 @@
+{%  extends 'base.html' %}
+{% block reference %}
+	<link href="/static/css/bootstrap.css" media="all" rel="stylesheet">
+	<script src="/static/js/bootstrap.min.js"></script>
+	<script src="/static/js/index.js"></script>
+	<script src="/static/js/jquery.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="" style="margin:30px 20px 20px 25px">
+
+	<div style="text-align:center; padding-left:92px; background:none repeat scroll 0% 0% #C9F0DD;height:60px">
+		<h4 style="text-align:center; padding:20px 0 0 30px;">管理员控制页面</h4>
+	</div>
+	<div class="row clearfix" style="margin:20px 0 20px 0px">
+		<div class="col-md-2 column" style="background:rgba(198, 190, 204, 1)">
+					<div class="sidebar-tab-active"><a href="/control/index">节点管理</a></div>
+					<div class="sidebar-tab"><a href="/control/nodeorder">命令控制</a></div>
+					<div class="sidebar-tab"><a href="/control/nodestatus">节点状态记录</a></div>
+					<div class="sidebar-tab"><a href="/control/activenode">节点活动记录</a></div>
+		</div>
+		<div class="col-md-10 column">
+		<h3>节点记录列表（{{nodeCnt}}）</h3>
+			<div style="margin:15px 0 10px 5px">
+				<!-- 按钮触发模态框 -->
+				<button class="btn btn-sm" onclick="choseAll()">
+				      全选
+				</button>
+				&nbsp;&nbsp;
+				<button class="btn btn-sm" onclick="choseReverse()">
+				      反选
+				</button>
+			</div>
+			<table style="border-width:0px;border-collapse:collapse;width:100%">
+				<tr style="background-color:#E0E0E0;height:40px;border-width:0px">
+					<td style="width:5%;border-width:0px;font-weight:bold;text-align:center">选中</td>
+					<td style="width:5%;border-width:0px;font-weight:bold;text-align:center">标号</td>
+					<td style="width:10%; border-width:0px;font-weight:bold;text-align:center">名称</td>
+					<td style="width:7%; border-width:0px;font-weight:bold;text-align:center">类型 </td>
+					<td style="width:7%; border-width:0px;font-weight:bold;text-align:center">状态</td>
+					<td style="width:19%; border-width:0px;font-weight:bold;text-align:center">url</td>
+					<td style="width:25%;border-width:0px;font-weight:bold;text-align:center"> 描述 </td>
+					<td style="width:17%;border-width:0px;font-weight:bold;text-align:center">创建时间</td>
+					<td style="width:5%;border-width:0px;font-weight:bold;text-align:center">操作</td>
+				</tr>
+			</table>
+
+			<table id = "dnsContent" style="border-width:0px;border-collapse:collapse;width:100%;table-layout:fixed;word-wrap:break-word;word-break:break-all;">
+				{% for node in nodes %}
+				<tr class="{% cycle row1,row2 %}" style="">
+				<td style="width:5%;border-width:0px;font-weight:bold;text-align:center"><input type='checkbox' value="{{node.id}}" class="selectNode"></td>
+				<td style="width:5%;border-width:0px;text-align:center">{{node.id}}</td>
+				<td style="width:10%;border-width:0px;text-align:centerborder-width:0px;text-align:centerborder-width:0px;text-align:center">{{node.name}}</td>
+				<td style="width:7%;border-width:0px;text-align:centerborder-width:0px;text-align:center">{{node.type}}</td>
+				<td style="width:7%;border-width:0px;text-align:center">{{node.status}}</td>
+				<td style="width:19%; border-width:0px;font-weight:bold;text-align:center"><a href='{{node.url}}'>{{node.url}}</a></td>
+				<td  data-toggle="modal"
+				   data-target="#myModal3" style="width:25%;border-width:0px;text-align:center"><a onclick="getDescription('{{node.description}}')">{{node.description|truncatechars:30}}</a></td>
+				<td style="width:17%;border-width:0px;text-align:center">
+					{{ node.timestamp}}</td>
+				<form action="/control/deletenode/" method='POST'>
+					<input style="display:none;" id="nodeIdRes" name="nodeIdRes" value="{{node.id}}">
+					<td style="width:5%;border-width:0px;font-weight:bold;text-align:center"><input type='submit' value="删除" class="selectNode"></td>
+				</form>
+				{% endfor %}
+			</table>
+
+			<div style="margin:20px 0 0 20px">
+				<!-- 按钮触发模态框 -->
+				<button class="btn btn-primary btn-sm" data-toggle="modal"
+				   data-target="#myModal1">
+				      添加节点
+				</button>
+				&nbsp;&nbsp;
+				<button class="btn btn-primary btn-sm" data-toggle="modal"
+				   data-target="#myModal2">
+				      发送命令
+				</button>
+				&nbsp;&nbsp;
+				<button class="btn btn-primary btn-sm" data-toggle="modal"
+				   data-target="#myModal4">
+				      密码破解
+				</button>
+
+			</div>
+
+			<div class="modal fade" id="myModal1" tabindex="-1" role="dialog"
+			  aria-labelledby="myModalLabel" aria-hidden="true" style="margin:30px 0 0 24%; width:60%">
+			   <div class="modal-dialog">
+			      <div class="modal-content">
+			         <div class="modal-header">
+			            <button type="button" class="close"
+			               data-dismiss="modal" aria-hidden="true">
+			                  &times;
+			            </button>
+			            <h4 class="modal-title" id="myModalLabel">
+			               添加新节点
+			            </h4>
+			         </div>
+
+			         <form action="/control/addnode/" method='POST' onsubmit="return checkinput();">
+			         <div class="modal-body">
+			         	<div style="margin: 10px 0 0 0">
+			         		节点名称 :  <input style="margin-left:10px" type='text' name='nodename' id='nodename'>
+			         	</div>
+
+			         	 <div style="margin: 20px 0 0 0">
+			         	 	节点描述： <input style="margin-left:5px" type='text' name='nodedescription' id='nodedescription'>
+			         	 </div>
+
+			         	 <div style="margin: 20px 0 0 0">
+			         		节点 url:  <input style="margin-left:22px" type='text' name='nodeurl' id='nodeurl'>
+			         	</div>
+			         	 <div style="margin: 20px 0 0 0">
+			         		节点 ip:  <input style="margin-left:27px" type='text' name='nodeip' id='nodeip'>
+			         	</div>
+			         	 <div style="margin: 20px 0 0 0">
+			         		节点 port:  <input style="margin-left:14px" type='text' name='nodeport' id='nodeport'>
+			         	</div>
+
+			         	<div style="margin: 20px 0 0 0">
+			         		节点类型 : <select  style="margin-left:12px;width:178px" name='nodetype' id='nodetype'>
+			         		<option selected='selected' value='windows'>windows</option>
+			         		<option value='web'>web</option>
+
+			         		<option value='replay'>relay</option>
+			         		</select>
+			         	</div>
+			         	<div style="margin: 20px 0 0 0">
+			         		控制密码 :  <input style="margin-left:12px" type='password' name='pwd' id='pwd'>
+			         	</div>
+			         	<div style="margin: 20px 0 0 0">
+			         		重复密码 :  <input style="margin-left:12px" type='password' name='pwdagain' id='pwdagain'>
+			         	</div>
+
+			        	 </div>
+
+
+
+			         <div class="modal-footer">
+			            <button type="button" class="btn btn-default"
+			               data-dismiss="modal">取消
+			            </button>
+			            <button type="submit" class="btn btn-primary">
+			          	    确定添加
+			            </button>
+			         </div>
+			       </form>
+
+			      </div>
+			</div>
+			</div>
+
+			<div class="modal fade" id="myModal2" tabindex="-1" role="dialog"
+			  aria-labelledby="myModalLabel" aria-hidden="true" style="margin:30px 0 0 24%; width:60%">
+			   <div class="modal-dialog">
+			      <div class="modal-content">
+			         <div class="modal-header">
+			            <button type="button" class="close"
+			               data-dismiss="modal" aria-hidden="true">
+			                  &times;
+			            </button>
+			            <h4 class="modal-title" id="myModalLabel">
+			               发送命令
+			            </h4>
+			         </div>
+
+			         <form action="/control/addorders/" method='POST' enctype="multipart/form-data" >
+			         <div class="modal-body">
+			         	<input style="display:none;" id="reserveData" name="nodeIds">
+			         	<div style="margin: 20px 0 0 0">
+			         		命令类型 : <select  style="margin-left:52px;width:130px" name='ordertype' id='ordertype'>
+			         		<option selected='selected' value='cmd'>cmd</option>
+			         		<option value='upload'>upload</option>
+			         		<option value='download'>download</option>
+			         		<option value='query'>query</option>
+			         		<option value="ddos">ddos</option>
+			         		<option value='scan'>scan</option>
+			         		<option value='check'>check</option>
+			         		</select>
+			         	</div>
+
+			         	 <div style="margin: 20px 0 0 0">
+			         	 	命令内容：
+			         		 <textarea style="margin-left:46px; width:350px;height:150px" type='text' name='ordercontent' id='ordercontent'></textarea>
+			         	 </div>
+
+			         	 <div style="margin: 20px 0 0 0">
+			         		文件上传:   <input class="input" name="file" type="file" id="file" style="margin-left:120px">
+			         		<span style="color:red;margin-left:122px">(当命令类型为upload时需要填写)</span>
+			         	</div>
+			         	 <div style="margin: 20px 0 0 0">
+			         		下载文件位置 :  <input style="margin-left:25px" type='text' name='downloadlocation' id='downloadlocation'><span style="color:red">(当命令类型为download时需要填写)</span>
+			         	</div>
+			        </div>
+
+
+
+			         <div class="modal-footer">
+			            <button type="button" class="btn btn-default"
+			               data-dismiss="modal">取消
+			            </button>
+			            <button type="submit" class="btn btn-primary" onclick="addData()">
+			          	    确定添加
+			            </button>
+			         </div>
+			       </form>
+
+			      </div>
+				</div>
+			</div>
+
+			<div class="modal fade" id="myModal3" tabindex="-1" role="dialog"
+				  aria-labelledby="myModalLabel" aria-hidden="true" style="margin:77px 0 0 13%; width:80%">
+				   <div class="modal-dialog">
+				      <div class="modal-content">
+
+				         <div class="modal-header">
+				            <button type="button" class="close"
+				               data-dismiss="modal" aria-hidden="true">
+				                  &times;
+				            </button>
+				            <h4 class="modal-title" id="myModalLabel">
+				             	描述详情
+				            </h4>
+				         </div>
+
+				         <div class="modal-body">
+				   	<div id = 'nodeDesc' style='margin-left:20px'>
+				   	</div>
+				         </div>
+
+				        <div class="modal-footer">
+					            <button type="button" class="btn btn-default"
+					               data-dismiss="modal">收起
+					            </button>
+				       </div>
+
+				      </div>
+				</div>
+			</div>
+
+			<div class="modal fade" id="myModal4" tabindex="-1" role="dialog"
+				  aria-labelledby="myModalLabel" aria-hidden="true" style="margin:77px 0 0 13%; width:80%">
+				   <div class="modal-dialog">
+				      <div class="modal-content">
+
+				         <div class="modal-header">
+				            <button type="button" class="close"
+				               data-dismiss="modal" aria-hidden="true">
+				                  &times;
+				            </button>
+				            <h4 class="modal-title" id="myModalLabel">
+				              密码破解
+				            </h4>
+				         </div>
+
+				  <form action="/control/pwdcracks/" method='POST'>
+				         <div class="modal-body">
+				   	<div id = 'pwdcrack' style='margin-left:20px'>
+				   	 <input style="display:none;" id="reserveDatas" name="nodeIdss">
+				   	<div style="margin: 20px 0 0 0">
+			         	 		密码类型 ：
+			         			 <select style="margin-left:13px;width:130px" name='pwdtype' id='pwdtype'>
+			         			 	<option selected="selected" value='md5'>md5</option>
+			         			 </select>
+			         		</div>
+
+			         		<div style="margin: 20px 0 0 0">
+				         	 	密文：
+				         		 <textarea style="margin-left:46px; width:350px;height:150px" type='text' name='miwen' id='miwen'></textarea>
+			         		 </div>
+
+			         		 <div style="margin: 20px 0 0 0px">
+				         	 	明文长度 ：
+				         		 <input style="margin-left:13px" name="mwlength">
+			         		</div>
+
+				   	</div>
+				         </div>
+
+				        <div class="modal-footer">
+					             <button type="button" class="btn btn-default"
+			               		data-dismiss="modal">取消
+			           			 </button>
+					            <button type="submit" class="btn btn-primary" onclick="addDatas()">
+					          	    确定添加
+					            </button>
+				       </div>
+
+				      </div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	  function checkinput(){
+	  	var name = $('#nodename').val()
+	  	var url = $('#nodeurl').val()
+	  	var val1 = $("#pwd").val()
+	  	var val2 = $("#pwdagain").val()
+	  	console.log(val1, val2)
+        		if(val1 != val2) {
+	                	alert("两次输入的密码不一致！");
+	               	 //location.reload();
+	               	 return false;
+           		}
+
+           		if(!name) {
+	                	alert("请填写节点名称！");
+	               	 //location.reload();
+	               	 return false;
+           		}
+           		if(!url) {
+	                	alert("请填写节点url！");
+	               	 //location.reload();
+	               	 return false;
+           		}
+           	}
+</script>
+{% endblock %}s
