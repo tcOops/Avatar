@@ -1,0 +1,4 @@
+django1.8.4
+python2.7.6
+mysql
+
