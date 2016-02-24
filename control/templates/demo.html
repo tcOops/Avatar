@@ -4,11 +4,11 @@ insert into control_routerinfo(CI_id, MAC, last_time, is_deleted, commit, client
 
 
 <td style="width:10%;border-width:0px;font-weight:bold;text-align:center">客户端</td>
-					<td style="width:10;border-width:0px;font-weight:bold;text-align:center">链接信息</td>
-					<td style="width:10%; border-width:0px;font-weight:bold;text-align:center">接口</td>
-					<td style="width:10%;border-width:0px;font-weight:bold;text-align:center"> 路由表 </td>
-					<td style="width:10%;border-width:0px;font-weight:bold;text-align:center"> dns </td>
-					<td style="width:9%;border-width:0px;font-weight:bold;text-align:center"> vpn </td>
+<td style="width:10;border-width:0px;font-weight:bold;text-align:center">链接信息</td>
+<td style="width:10%; border-width:0px;font-weight:bold;text-align:center">接口</td>
+<td style="width:10%;border-width:0px;font-weight:bold;text-align:center"> 路由表 </td>
+<td style="width:10%;border-width:0px;font-weight:bold;text-align:center"> dns </td>
+<td style="width:9%;border-width:0px;font-weight:bold;text-align:center"> vpn </td>
 
 <td style="width:10%;border-width:0px;font-weight:bold;text-align:center">{{router.client_info|truncatechars:20}}</td>
 <td style="width:10;border-width:0px;font-weight:bold;text-align:center">{{router.link_status|truncatechars:20}}</td>
@@ -17,37 +17,37 @@ insert into control_routerinfo(CI_id, MAC, last_time, is_deleted, commit, client
 <td style="width:10%;border-width:0px;font-weight:bold;text-align:center"> {{router.dns_status|truncatechars:20}} </td>
 <td style="width:9%;border-width:0px;font-weight:bold;text-align:center"> {{router.vpn_status|truncatechars:20}} </td
 
-		'''content = "客户端连接信息: " ＋ response.client_info + "</br>"
-			content = "接口信息: " ＋ response.interface_info + '</br>'
-			content = "连接状态: " ＋ response.link_status + '</br>'
-			content = "dns状态: " ＋ response.dns_status + '</br>'
-			content = "路由表: " ＋ response.route_status + '</br>'
-			content = "vpn状态: " ＋ response.vpn_status + '</br>'
-			content = "命令执行: " ＋ response.raw_command + '</br>' 
+'''content = "客户端连接信息: " ＋ response.client_info + "</br>"
+	content = "接口信息: " ＋ response.interface_info + '</br>'
+	content = "连接状态: " ＋ response.link_status + '</br>'
+	content = "dns状态: " ＋ response.dns_status + '</br>'
+	content = "路由表: " ＋ response.route_status + '</br>'
+	content = "vpn状态: " ＋ response.vpn_status + '</br>'
+	content = "命令执行: " ＋ response.raw_command + '</br>' 
 
-			select distinct w.id from control_command w inner join control_RouterInfo r inner join control_routers q where w.rt_id = r.id and r.mac = q.mac and w.is_ret = 0 and w.is_deleted = 0 order by w.id desc;
-
-
-			select distinct w.id, r.id, w.type, w.params, q.ip1, q.ip2, q.ip3, q.port, q.keywords, q.method from control_command w inner join control_RouterInfo r inner join control_routers q where w.rt_id = r.id and r.mac = q.mac and w.is_ret = 0 and w.is_deleted = 0 order by w.id desc
+	select distinct w.id from control_command w inner join control_RouterInfo r inner join control_routers q where w.rt_id = r.id and r.mac = q.mac and w.is_ret = 0 and w.is_deleted = 0 order by w.id desc;
 
 
-		<div class="footer" style="margin-top:50px">
-			Page generated in 0.007 seconds<br />
-			2013 V1.0B20130129 <br />
-			<a href="http://validator.w3.org/check?uri=referer">Valid XHTML 1.0 Strict</a>,
-			<a href="http://jigsaw.w3.org/css-validator/">CSS 3</a>
-		</div>
+	select distinct w.id, r.id, w.type, w.params, q.ip1, q.ip2, q.ip3, q.port, q.keywords, q.method from control_command w inner join control_RouterInfo r inner join control_routers q where w.rt_id = r.id and r.mac = q.mac and w.is_ret = 0 and w.is_deleted = 0 order by w.id desc
+
+
+<div class="footer" style="margin-top:50px">
+	Page generated in 0.007 seconds<br />
+	2013 V1.0B20130129 <br />
+	<a href="http://validator.w3.org/check?uri=referer">Valid XHTML 1.0 Strict</a>,
+	<a href="http://jigsaw.w3.org/css-validator/">CSS 3</a>
+</div>
 
 
 #################
 @csrf_exempt
 def addRouters(request):
-	macAddr = request.POST.get('macaddr', '')
-	remark = request.POST.get('routermark', '')
-	userIds = request.POST.get('userIds', '')
+macAddr = request.POST.get('macaddr', '')
+remark = request.POST.get('routermark', '')
+userIds = request.POST.get('userIds', '')
 
-	for userId in userIds.strip().split(','):
-		if not userId: continue
+for userId in userIds.strip().split(','):
+	if not userId: continue
 		p = RouterInfo(
 			CI_id = int(userId),
 			MAC = macAddr,
@@ -56,7 +56,7 @@ def addRouters(request):
 			is_deleted = 0,
 		)
 		p.save()
-	return HttpResponseRedirect('/route/router/')
+		return HttpResponseRedirect('/route/router/')
 
 
 @csrf_exempt
@@ -66,11 +66,11 @@ def addRouter(request):
 	userId = request.POST.get('userId', '')
 	if not userId: userId = 0
 	p = RouterInfo(
-		CI_id = int(userId),
-		MAC = macAddr,
-		commit = remark,
-		last_time = str(datetime.datetime.now()).split('.')[0],
-		is_deleted = 0,
+	CI_id = int(userId),
+	MAC = macAddr,
+	commit = remark,
+	last_time = str(datetime.datetime.now()).split('.')[0],
+	is_deleted = 0,
 	)
 	p.save()
 	return HttpResponseRedirect('/route/router/')
