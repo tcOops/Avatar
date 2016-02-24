@@ -1,0 +1,98 @@
+{%  extends 'base.html' %}
+{% block reference %}
+	<link href="/static/css/bootstrap.css" media="all" rel="stylesheet">
+	<script src="/static/js/bootstrap.min.js"></script>
+	<script src="/static/js/index.js"></script>
+	<script src="/static/js/jquery.min.js"></script>
+{% endblock %}
+
+{% block content %}
+	<div class="" style="margin:30px 20px 20px 25px">
+
+	<div style="text-align:center; padding-left:92px; background:none repeat scroll 0% 0% #C9F0DD;height:60px">
+		<h4 style="text-align:center; padding:20px 0 0 30px;">管理员控制页面</h4>
+	</div>
+	<div class="row clearfix" style="margin:20px 0 20px 0px">
+		<div class="col-md-2 column" style="background:rgba(198, 190, 204, 1)">
+					<div class="sidebar-tab"><a href="/route/index">反馈者管理</a></div>
+					<div class="sidebar-tab"><a href="/route/router">路由器管理</a></div>
+          <div class="sidebar-tab-active"><a href="/route/routerconnect">路由连接信息</a></div>
+					<div class="sidebar-tab"><a href="/route/order">命令控制</a></div>
+		</div>
+		<div class="col-md-10 column">
+			<div style="margin-left:85%">
+				{% if username %}
+					欢迎, <b> {{username}} </b>
+					 (<a href="/route/logout">登出</a>)
+				{% else %}
+					<a href = "/route/login"> 登录 </a>
+				{% endif %}
+			</div>
+		<h3>路由器连接详情({{routerConnectCnt}})</h3>
+			<table style="border-width:0px;border-collapse:collapse;width:100%">
+				<tr style="background-color:#E0E0E0;height:40px;border-width:0px">
+					<td style="width:8%;border-width:0px;font-weight:bold;text-align:center">标号</td>
+					<td style="width:10%; border-width:0px;font-weight:bold;text-align:center">路由型号</td>
+					<td style="width:22%; border-width:0px;font-weight:bold;text-align:center">MAC地址</td>
+					<td style="width:22%; border-width:0px;font-weight:bold;text-align:center">IP列表</td>
+					<!--<td style="width:10%; border-width:0px;font-weight:bold;text-align:center">路由状态 </td>-->
+					<td style="width:12%; border-width:0px;font-weight:bold;text-align:center">反馈者</td>
+					<td style="width:17%;border-width:0px;font-weight:bold;text-align:center">反馈时间</td>
+					<td style="width:9%;border-width:0px;font-weight:bold;text-align:center">操作</td>
+				</tr>
+			</table>
+
+			<table id = "dnsContent" style="border-width:0px;border-collapse:collapse;width:100%;table-layout:fixed;word-wrap:break-word;word-break:break-all;">
+				{% for router in routerConnects %}
+				<tr class="{% cycle row1,row2 %}" style="">
+				<td style="width:8%;border-width:0px;text-align:center">{{router.id}}</td>
+				<td style="width:10%;border-width:0px;text-align:center">{{router.model}}</td>
+				<td style="width:22%;border-width:0px;text-align:center">{{router.MAC}}</td>
+				<td style="width:22%;border-width:0px;text-align:center">{{router.ip1}}</td>
+				<!--<td style="width:10%;border-width:0px;text-align:center">{{router.status}}</td>-->
+				<td  data-toggle="modal"
+					 data-target="#myModal5" style="width:12%;border-width:0px;text-align:center">
+					 <a onclick="showCIUser({{router.CI_id}})">{{router.status}}</a>
+				</td>
+				<td style="width:17%;border-width:0px;text-align:center">{{router.action_time}}</td>
+				<form action="/route/deleterouter/" method='POST'>
+					<input style="display:none;" id="routerId" name="routerId" value="{{router.id}}">
+					<input style="display:none;" id="routerMAC" name="routerMAC" value="{{router.MAC}}">
+					<td style="width:9%;border-width:0px;font-weight:bold;text-align:center"><input type='submit' value="删除" class="selectNode"></td>
+				</form>
+				{% endfor %}
+			</table>		
+  		</div>
+
+  		<div class="modal fade" id="myModal5" tabindex="-1" role="dialog"
+				  aria-labelledby="myModalLabel" aria-hidden="true" style="margin:77px 0 0 13%; width:80%">
+				<div class="modal-dialog">
+				      <div class="modal-content">
+
+				         <div class="modal-header">
+				            <button type="button" class="close"
+				               data-dismiss="modal" aria-hidden="true">
+				                  &times;
+				            </button>
+				            <h4 class="modal-title" id="myModalLabel">
+				             	反馈者详情
+				            </h4>
+				         </div>
+
+				         <div class="modal-body">
+	   		 				<div id = 'CIUserDesc' style='margin-left:20px'>
+	   						</div>
+				         </div>
+
+				        <div class="modal-footer">
+				            <button type="button" class="btn btn-default"
+				               data-dismiss="modal">收起
+				            </button>
+				       </div>
+
+				      </div>
+				</div>
+		</div>
+	</div>
+</div>
+{% endblock %}s

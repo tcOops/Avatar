@@ -1,45 +1,61 @@
 from django.db import models
 
 # Create your models here.
-class User(models.Model):
-    userName = models.CharField(max_length=100)
-    password = models.CharField(max_length=100)
-    create_time = models.DateField(auto_now_add=True)
-    is_deleted = models.BooleanField(default=0)
+class CI_user(models.Model):
+	alias = models.CharField(max_length=128)
+	userId = models.IntegerField()
+	name = models.CharField(max_length=100)
+	password = models.CharField(max_length=100)
+	commit = models.CharField(max_length=200, default='--')
+	last_time = models.CharField(max_length=50)
+	is_deleted = models.BooleanField(default=False)
 
 
-class CIUser(models.Model):
-    alias = models.CharField(max_length=50)
-    userId = models.IntegerField()
-    name = models.CharField(max_length=50)
-    password = models.CharField(max_length=50)
-    commit = models.TextField()
-    feedbackTime = models.DateField(auto_now_add=True)
-    is_deleted = models.BooleanField(default=0)
+# reserve the connection data
+class Routers(models.Model):
+	CI_id = models.IntegerField()
+	MAC = models.CharField(max_length=60)
+	ip1 = models.CharField(max_length=50, default='--')
+	ip2 = models.CharField(max_length=50, default='--')
+	ip3 = models.CharField(max_length=50, default='--')
+	port = models.IntegerField()
+	keywords = models.CharField(max_length=50)
+	method = models.CharField(max_length=50)
+	model = models.CharField(max_length=100)
+	status = models.CharField(max_length=50)
+	action_time = models.CharField(max_length=50)
+	is_deleted = models.BooleanField(default=False)
 
 
-class Router(models.Model):
-    CIUser_id = models.IntegerField()
-    mac_address = models.CharField(max_length=80)
-    ip1 = models.CharField(max_length = 80)
-    ip2 = models.CharField(max_length = 80)
-    ip3 = models.CharField(max_length = 80)
-    port = models.IntegerField()
-    key = models.CharField(max_length=150)
-    method = models.CharField(max_length=150)
-    model = models.CharField(max_length=100)
-    status = models.CharField(max_length=50)
-    update_time = models.DateField(auto_now_add=True)
-    is_deleted = models.BooleanField(default=0)
-    commit = models.TextField()
+# reserve the route info
+class RouterInfo(models.Model):
+	CI_id = models.IntegerField()
+	MAC = models.CharField(max_length=60)
+	commit = models.CharField(max_length=200, default='--')
+	last_time = models.CharField(max_length=50)
+	is_deleted = models.BooleanField(default=False)
+	client_info = models.TextField(default='--')
+	link_status = models.TextField(default='--')
+	interface_info = models.TextField(default='--')
+	route_status = models.TextField(default='--')
+	dns_status = models.TextField(max_length=200, default='--')
+	vpn_status = models.TextField(max_length=100, default='--')
+	raw_command = models.TextField(default='--')
 
 
 class Command(models.Model):
-    router_id = models.IntegerField()
-    create_time = models.DateField(auto_now_add=True)
-    cmd_type = models.CharField(max_length=50)
-    params = models.TextField()
-    result = models.CharField(max_length=50)
-    Is_deleted = models.BooleanField(default=0)
-    is_get = models.BooleanField(default=0) #weather the router get the order?
-    is_return = models.BooleanField(default=0) #weather the router return the ans of the command executing?
+	CI_id = models.IntegerField()
+	rt_id = models.IntegerField()
+	date = models.CharField(max_length=50)
+	type = models.CharField(max_length=50)
+	params = models.CharField(max_length=500)
+	is_deleted = models.BooleanField(default=False)
+	is_get = models.BooleanField(default=False)
+	is_ret = models.BooleanField(default=False)
+	ret_ans = models.TextField(default='--')
+
+
+class Command_tpl(models.Model):
+	type = models.CharField(max_length=100)
+	params = models.CharField(max_length=500)
+	is_deleted = models.BooleanField(default=False)

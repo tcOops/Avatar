@@ -367,7 +367,7 @@ h4 {
     font-size: 16px;
     font-weight: bold;
     line-height: 16px;
-    width: 194px;
+    width: 180px;
     padding: 8px 20px 8px 0px;
     background-image: url('/static/img/sidebar_tab.png');
     margin-bottom: 4px;
@@ -443,12 +443,12 @@ h4 {
 
 .row1{
     background-color:white;
-    height:50px
+    height:40px
 }
 
 .row2{
     background-color:#EFEFEF;
-    height:50px
+    height:40px
 }
 
 #mainPage{
@@ -456,6 +456,6 @@ h4 {
 }
 
 #about{
-    padding: 8px 24px 0px 24px; 
+    padding: 8px 24px 0px 24px;
     line-height: 28px;
 }

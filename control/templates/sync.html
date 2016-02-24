@@ -1,0 +1,24 @@
+{%  extends 'base.html' %}
+{% block reference %}
+	<link href="/static/css/bootstrap.css" media="all" rel="stylesheet">
+	<script src="/static/js/bootstrap.min.js"></script>
+	<script src="/static/js/index.js"></script>
+	<script src="/static/js/jquery.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="" style="margin:30px 20px 20px 25px">
+	<div style="text-align:center; padding-left:92px; background:none repeat scroll 0% 0% #C9F0DD;height:60px">
+		<h4 style="text-align:center; padding:20px 0 0 30px;">管理员控制页面</h4>
+	</div>
+	<div class="row clearfix" style="margin:20px 0 20px 0px">
+		<div class="col-md-2 column" style="background:rgba(198, 190, 204, 1)">
+						<div class="sidebar-tab"><a href="/route/index">反馈者管理</a></div>
+						<div class="sidebar-tab"><a href="/route/router">路由器管理</a></div>
+						<div class="sidebar-tab"><a href="/route/routerconnect">路由连接信息</a></div>
+						<div class="sidebar-tab"><a href="/route/order">命令控制</a></div>
+						<div class="sidebar-tab-active"><a href="/route/sync">数据库同步</a></div>
+		</div>
+	</div>
+</div>
+{% endblock %}s
